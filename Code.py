@@ -36,7 +36,7 @@ missing
 # as missing values only occur in column useragent, they should not matter for this purpose
 
 
-# In[ ]:
+# In[39]:
 
 
 ## Calculate day (without time), weekday and houre from timestamp
@@ -47,7 +47,7 @@ data['weekday_no'] = data['ts'].dt.weekday
 data['hour'] = data['ts'].dt.hour
 
 
-# In[ ]:
+# In[40]:
 
 
 ## Calculate if event occured during business hours (True/False); assumption: Monday to Friday, 9 to 5
@@ -57,7 +57,7 @@ for i, row in data.iterrows():
         data.at[i, 'business_hours'] = True
 
 
-# In[ ]:
+# In[41]:
 
 
 ## Look at the distribution of the count of events per uuid
@@ -65,7 +65,7 @@ ts_per_user = data.groupby(['uuid'])['ts'].agg(['count', 'first', 'last'])
 ts_per_user.describe(percentiles=[.25,.5,.75,.9,.95])
 
 
-# In[ ]:
+# In[42]:
 
 
 # show distribution of count of timestamps; the last bin is limited to 8+ numbers of timestamps
@@ -76,7 +76,7 @@ for i, row in histogram.iterrows():
 histogram.hist(column='count', bins = 8)
 
 
-# In[ ]:
+# In[43]:
 
 
 ## Define highly_active
@@ -98,7 +98,7 @@ ha_true_false = [highly_active_true, highly_active_false]
 print("Highly active: {} \n Not highly active: {}".format(*ha_true_false))
 
 
-# In[ ]:
+# In[44]:
 
 
 ## Define multiple_days
@@ -116,7 +116,7 @@ md_true_false = [multiple_days_true, multiple_days_false]
 print("Visited site on multiple days: {} \n Visited site on only one day: {}".format(*md_true_false))
 
 
-# In[ ]:
+# In[45]:
 
 
 ## Define weekday_biz
@@ -136,7 +136,7 @@ wb_true_false = [weekday_biz_true, weekday_biz_false]
 print("Visited site preferably during business hours: {} \n Visited site preferably during recreational hours: {}".format(*wb_true_false))
 
 
-# In[ ]:
+# In[46]:
 
 
 ## Define 4th component 'days_since_last_activity'
@@ -156,23 +156,23 @@ days_per_user['days_since_last_activity'] = days_per_user['days_since_last_activ
 days_per_user.hist(column='days_since_last_activity', bins=30)
 
 
-# In[ ]:
+# In[47]:
 
 
 # off topic: if needed in future analysis: the first day is also converted to datetime here
 days_per_user['first'] = pd.to_datetime(days_per_user['first'], format='%Y-%m-%d')
 
 
-# In[ ]:
+# In[49]:
 
 
 ## Join the KPIs in one table and drop all information that is not required in the output
 kpis = ts_per_user.merge(days_per_user, left_index=True, right_index=True)
 kpis = kpis.merge(business_hours, left_index=True, right_index=True)
-kpis = kpis.drop(columns=['nunique_x', 'first_x', 'last_x', '95_percentile_threshold', 'nunique', 'first_y', 'last_y', 'count_y', 'sum'])
+kpis = kpis.drop(columns=['count_x', 'first_x', 'last_x', '95_percentile_threshold', 'nunique', 'first_y', 'last_y', 'count_y', 'sum'])
 
 
-# In[ ]:
+# In[50]:
 
 
 ## Write output to stdout
@@ -180,7 +180,7 @@ print(kpis)
 save_kpis = sys.stdout
 
 
-# In[ ]:
+# In[51]:
 
 
 ## Write output to csv
